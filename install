@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+DIR="/usr/local/opt/kegger"
+GITHUB_USER="chrisopedia"
+
+# Check for Homebrew; install brew
+if ! type -P 'brew' &> /dev/null; then
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing Homebrew"
+    ruby -e "$(curl -#fkL raw.github.com/Homebrew/homebrew/go/install)"
+
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Running brew doctor"
+    brew doctor
+else
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Updating Homebrew"
+    brew update
+    brew upgrade
+fi
+
+# Check for git; install git
+if ! type -P 'git' &> /dev/null; then
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing Git"
+    brew install git
+fi
+
+# Check for jq; install jq
+if ! type -P 'jq' &> /dev/null; then
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing jq"
+    brew install jq
+fi
+
+# Check for roundup; install roundup
+if ! type -P 'roundup' &> /dev/null; then
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing Roundup"
+    brew install roundup
+fi
+
+# If missing, download and extract the kegger repository
+if [[ ! -d "${DIR}" ]]; then
+
+    # no bash directory found
+    printf "$(tput bold ; tput setaf 3)⚠ Warning: $(tput sgr0)%s!\n" "No ${DIR} found"
+
+    # create directory
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Creating directory at ${DIR}"
+    mkdir -p "${DIR}"
+
+    # Download the repository as a tarball
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Downloading repository to /tmp directory"
+    curl -#fLo /tmp/kegger.tar.gz "https://github.com/${GITHUB_USER}/kegger/tarball/master"
+
+    # Extract to the kegger directory
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Extracting files to ${DIR}"
+    tar -zxf /tmp/kegger.tar.gz --strip-components 1 -C "${DIR}"
+
+    # Remove the tarball
+    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Removing tarball from /tmp directory"
+    rm -rf /tmp/kegger.tar.gz
+
+    printf "$(tput setaf 2)✓ Success: $(tput sgr0)%s.\n" "${DIR} created, repository downloaded and extracted"
+fi
+
+# Change to the kegger directory
+cd "${DIR}"
+
+# Pull down the latest changes
+printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Pulling down latest changes"
+git pull --rebase origin master
+
+printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Symlinking ${DIR}/bin/kegger to /usr/local/bin/kegger"
+ln -fs "${DIR}/bin/kegger" "/usr/local/bin/kegger"
+
+printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Symlinking ${DIR}/share/man/man1/kegger.1 to /usr/local/share/man/man1/kegger.1"
+ln -fs "${DIR}/share/man/man1/kegger.1" "/usr/local/share/man/man1/kegger.1"
+
+if [ -h "/usr/local/bin/kegger" ]; then
+    printf "$(tput setaf 2)✓ Success: $(tput sgr0)%s.\n" "kegger has been installed"
+fi
