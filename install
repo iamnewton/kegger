@@ -34,6 +34,28 @@ if ! type -P 'roundup' &> /dev/null; then
     brew install roundup
 fi
 
+# Tap/Setup homebrew cask for OS X installations
+if [[ ! -d "$(brew --prefix)/Library/Taps/caskroom/homebrew-cask" ]]; then
+	brew tap caskroom/cask
+	brew install brew-cask
+fi
+
+# Tap/Setup homebrew cask versions for OS X alternate versions
+if [[ ! -d "$(brew --prefix)/Library/Taps/caskroom/homebrew-versions" ]]; then
+	brew tap caskroom/versions
+fi
+
+# Tap/Setup homebrew php for fonts
+if [[ ! -d "$(brew --prefix)/Library/Taps/caskroom/homebrew-fonts" ]]; then
+	brew tap caskroom/fonts
+fi
+
+# Tap/Setup homebrew php for Quicklook plugins
+if [[ ! -d "${HOME}/Library/QuickLook" ]]; then
+	rm -rf "${HOME}/Library/QuickLook"
+	mkdir -p "${HOME}/Library/QuickLook"
+fi
+
 # If missing, download and extract the kegger repository
 if [[ ! -d "${DIR}" ]]; then
 
