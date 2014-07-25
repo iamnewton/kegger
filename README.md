@@ -6,6 +6,8 @@
 
 The simple answer is nothing.  I have several machines, work, personal, server, etc,. I just wanted to be able to install different software without having to remember what was that one line.  Or better yet, I wanted to group the software by its purpose so that I could install them by "categories". Or even better, I could simply maintain a list of software to update in its own repository and kegger would update and install anything that was new. Ideally this is meant to run alongside your initial machine configuration or setup, such as what I'm doing with [eighth-inning](https://github.com/chrisopedia/eighth-inning).
 
+[![Version 1.1.0](http://img.shields.io/badge/version-1.1.0-brightgreen.svg)](https://github.com/chrisopedia/bash/releases/tag/1.1.0) [![Stories in Ready](https://badge.waffle.io/chrisopedia/kegger.png?label=Ready)](http://waffle.io/chrisopedia/kegger)
+
 ## Requirements
 
 * [Git][git] and [Github account][github]
@@ -51,10 +53,6 @@ When passing `kegger(1)` a Gist ID, there is a specific format that should be ad
 ## Contributing
 
 Suggestions and contributions are always welcome.  If you'd like to see a new keg and don't feel comfortable creating your own, you can get involved by either [creating an issue](https://github.com/chrisopedia/kegger/issues/new), or [forking the code](https://github.com/chrisopedia/kegger/fork) and [creating a pull request](https://github.com/chrisopedia/kegger/compare/). For more information on how to work with the code, please see the [CONTRIBUTING.md](https://github.com/chrisopedia/kegger/blob/master/CONTRIBUTING.md) documentation.
-
-* * *
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/chrisopedia/kegger/trend.png)](https://bitdeli.com/free "Bitdeli Badge") [![Stories in Ready](https://badge.waffle.io/chrisopedia/kegger.png?label=Ready)](http://waffle.io/chrisopedia/kegger) [![Donate on Gittip](http://img.shields.io/gittip/alanhamlett.png)](https://www.gittip.com/chrisopedia/) [![Version 1.0.0](http://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/chrisopedia/bash/releases/tag/1.0.0) [![MIT License](http://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/chrisopedia/kegger/blob/master/LICENSE.md)
 
 [bin]: https://github.com/chrisopedia/kegger/blob/master/bin/kegger
 [download]: https://github.com/chrisopedia/kegger/archive/master.zip
