@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# @TODO: figure out how to get global Caskfile to update/maintain
-
 # Check if Homebrew is installed, if not bail
 if ! type -P 'git' &> /dev/null; then
 	printf '%s⊘ Error:%s Homebrew is required to use %s. Aborting!\n' "$(tput setaf 1)" "$(tput sgr0)" "$(basename "$0")"
@@ -26,119 +24,104 @@ if [[ ! -d "$(brew --prefix)/Library/Taps/caskroom/homebrew-cask" ]]; then
 	exit 2
 fi
 
-CASKFILE="/usr/local/opt/osxdefaults/var/Caskfile"
-usage="$(basename "$0"): usage: $(basename "$0") [-h|--help] [-v|--version]"
+_kegger() {
+	local usage="$(basename "$0"): usage: $(basename "$0") [-h|--help] [-v|--version] $(tput smul)Github Gist ID$(tput rmul)"
+	local opt response gist_url gist_file
+	local id="$1"
+	local api_url="https://api.github.com/gists/${id}"
 
-# Test for known flags
-for opt in "$@"
-do
-	case "$opt" in
-		-h | --help) # Help text
-			printf '\n'
-			printf 'Options\n'
-			printf '\n'
-			printf '\t-h, --help              Print this help text\n'
-			printf '\t-v, --version           Print out the version\n'
-			printf '\n'
-			printf 'Documentation can be found at https://github.com/chrisopedia/dotfiles\n'
-			printf '\n'
-			exit 0
-			;;
-		-t | --test) # test suite using roundup
-			roundup="$(type -P 'roundup')"
-			[[ ! -z $roundup ]] || {
-				printf '%s⊘ Error:%s Roundup is required to run tests. Aborting!\n' "$(tput setaf 1)" "$(tput sgr0)"
-				printf '\n'
-				printf 'Download it at https://github.com/bmizerany/roundup\n'
-				exit 2;
-			}
-			$roundup ./tests/*.sh
-			exit 0
-			;;
-		-v | --version) # Version of software
-			printf 'Version %s\n' "$(git describe --tags)"
-			exit 0
-			;;
-		-*)
-			printf '%sbash: %s: %s: Invalid option\n' "-" "$(basename "$0")" "$1"
-			printf '%s\n' "$usage"
-			exit 1
-			;;
-		*)  # No more options
-			break
-			;;
-	esac
-done
+	# Test for known flags
+	for opt in "$@"
+	do
+		case "$opt" in
+			-h | --help) # Help text
+				printf "%s\n" "${usage}"
+				exit
+				;;
+			-t | --test) # test suite using roundup
+				roundup="$(type -P 'roundup')"
+				[[ ! -z $roundup ]] || {
+					printf '%s⊘ Error:%s Roundup is required to run tests. Aborting!\n' "$(tput setaf 1)" "$(tput sgr0)"
+					printf '\n'
+					printf 'Download it at https://github.com/bmizerany/roundup\n'
+					exit 2;
+				}
+				$roundup ./tests/*.sh
+				exit 0
+				;;
+			-v | --version) # Version of software
+				printf 'Version %s\n' "$(git describe --tags)"
+				exit 0
+				;;
+			-*|--*)
+				printf "%s: usage: %s: invalid option\n%s\n" "$(basename "$0")" "$opt"
+				exit 1
+				;;
+		esac
+	done
 
-# Check if URL is passed in, if not bail
-if [[ -z "$1" ]]; then
-	printf '%s⊘ Error:%s A valid Github Gist ID is required. Aborting!\n' "$(tput setaf 1)" "$(tput sgr0)"
-	exit 3
-fi
-
-# set some variables
-api_url="https://api.github.com/gists/$1"
-
-
-# http://stackoverflow.com/questions/238073/how-to-add-a-progress-bar-to-a-shell-script
-# start progress bar
-while :;do echo -n .;sleep 1;done &
-
-# check response header from github user passed in
-# http://stackoverflow.com/a/10724976/1536779
-response="$(curl --write-out %{http_code} --silent --output /dev/null "${api_url}")"
-
-# kill the progress bar
-kill $!; trap 'kill $!' SIGTERM
-
-# if reponse is greater than or equal to 400 somethings wrong
-if [[ "${response}" -ge 400 ]]; then
-	printf '%sbash: %s: %s: URL is not valid\n' "-" "$(basename "$0")" "$1"
-	#debug statement
-	#printf 'Github HTTP Response code: %s\n' "${response}"
-	exit 3
-fi
-
-# Remove previous Caskfile
-rm -rf ${CASKFILE}
-
-# get a json list of all repos and story as array
-gist_url=$(curl "${api_url}" | jq '.files[].raw_url')
-gist_url="${gist_url:1:${#gist_url}-2}"
-gist_file=$(curl "${api_url}" | jq '.files[].filename')
-gist_file="${gist_file:1:${#gist_file}-2}"
-
-
-curl -#fLOJ "${gist_url}"
-mv "${gist_file}" "/tmp/${gist_file}"
-
-# update and upgrade all packages
-echo "update" >> ${CASKFILE}
-echo "upgrade" >> ${CASKFILE}
-
-# store IFS within a temp variable
-OIFS=$IFS
-
-# set the separator to a carriage return & a new line break
-IFS=$'\r\n' 
-# read in passed-in file and store as an array
-brews=($(cat "/tmp/${gist_file}"))
-
-for index in ${!brews[*]}
-do
-	if ! brew list '${brews[$index]}' &> /dev/null; then
-		# Store the name (and options) of every missing formula
-		echo "cask install ${brews[$index]}" >> ${CASKFILE}
+	# Check if URL is passed in, if not bail
+	if [[ -z "${id}" ]]; then
+		printf "bash: %s: A valid Github Gist ID is required\n" "$(basename "$0")"
+		exit 1;
 	fi
-done
 
-# reset IFS back
-IFS=$OIFS
+	# http://stackoverflow.com/questions/238073/how-to-add-a-progress-bar-to-a-shell-script
+	# start progress bar
+	while :;do echo -n .;sleep 1;done &
 
-echo 'cask alfred link' >> ${CASKFILE}
-echo 'cleanup' >> ${CASKFILE}
+	# check response header from github user passed in
+	# http://stackoverflow.com/a/10724976/1536779
+	response="$(curl --write-out %{http_code} --silent --output /dev/null "${api_url}")"
 
-# this will process the Caskfile in the current directory
-brew bundle ${CASKFILE}
+	# kill the progress bar
+	kill $!; trap 'kill $!' SIGTERM
 
-rm -rf "/tmp/${gist_file}"
+	# if reponse is greater than or equal to 400 somethings wrong
+	if [[ "${response}" -ge 400 ]]; then
+		printf '%sbash: %s: %s: URL is not valid\n' "-" "$(basename "$0")" "$1"
+		#debug statement
+		#printf 'Github HTTP Response code: %s\n' "${response}"
+		exit 3
+	fi
+
+	# get a json list of all repos and story as array
+	gist_url=$(curl "${api_url}" | jq '.files[].raw_url')
+	gist_url="${gist_url:1:${#gist_url}-2}"
+	gist_file=$(curl "${api_url}" | jq '.files[].filename')
+	gist_file="${gist_file:1:${#gist_file}-2}"
+
+
+	curl -#fLOJ "${gist_url}"
+	mv "${gist_file}" "/tmp/${gist_file}"
+
+	# update and upgrade all packages
+	brew update
+	brew upgrade
+
+	# store IFS within a temp variable
+	OIFS=$IFS
+
+	# set the separator to a carriage return & a new line break
+	IFS=$'\r\n' 
+	# read in passed-in file and store as an array
+	brews=($(cat "/tmp/${gist_file}"))
+
+	for index in ${!brews[*]}
+	do
+		if ! brew list '${brews[$index]}' &> /dev/null; then
+			# Store the name (and options) of every missing formula
+			brew cask install ${brews[$index]}
+		fi
+	done
+
+	# reset IFS back
+	IFS=$OIFS
+
+	brew cask alfred link
+	brew cleanup
+
+	rm -rf "/tmp/${gist_file}"
+}
+
+_kegger "$@"

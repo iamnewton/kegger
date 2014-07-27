@@ -6,7 +6,7 @@
 
 The simple answer is nothing.  I have several machines, work, personal, server, etc,. I just wanted to be able to install different software without having to remember what was that one line.  Or better yet, I wanted to group the software by its purpose so that I could install them by "categories". Or even better, I could simply maintain a list of software to update in its own repository and kegger would update and install anything that was new. Ideally this is meant to run alongside your initial machine configuration or setup, such as what I'm doing with [eighth-inning](https://github.com/chrisopedia/eighth-inning).
 
-[![Version 1.1.0](http://img.shields.io/badge/version-1.1.0-brightgreen.svg)](https://github.com/chrisopedia/bash/releases/tag/1.1.0) [![Stories in Ready](https://badge.waffle.io/chrisopedia/kegger.png?label=Ready)](http://waffle.io/chrisopedia/kegger)
+[![Version 1.1.1](http://img.shields.io/badge/version-1.1.1-brightgreen.svg)](https://github.com/chrisopedia/bash/releases/tag/1.1.1) [![Stories in Ready](https://badge.waffle.io/chrisopedia/kegger.png?label=Ready)](http://waffle.io/chrisopedia/kegger)
 
 ## Requirements
 
