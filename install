@@ -1,37 +1,38 @@
 #!/usr/bin/env bash
 
-DIR="/usr/local/opt/kegger"
+REPO="kegger"
+DIR="/usr/local/opt/${REPO}"
 GITHUB_USER="chrisopedia"
 
 # Check for Homebrew; install brew
 if ! type -P 'brew' &> /dev/null; then
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing Homebrew"
-    ruby -e "$(curl -#fkL raw.github.com/Homebrew/homebrew/go/install)"
+	printf "%s┃%s Installing Homebrew%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	ruby -e "$(curl -#fkL raw.github.com/Homebrew/homebrew/go/install)"
 
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Running brew doctor"
-    brew doctor
+	printf "%s┃%s Running brew doctor%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	brew doctor
 else
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Updating Homebrew"
-    brew update
-    brew upgrade
+	printf "%s┃%s Updating  Homebrew%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	brew update
+	brew upgrade
 fi
 
 # Check for git; install git
 if ! type -P 'git' &> /dev/null; then
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing Git"
-    brew install git
+	printf "%s┃%s Installing Git...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	brew install git
 fi
 
 # Check for jq; install jq
 if ! type -P 'jq' &> /dev/null; then
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing jq"
-    brew install jq
+	printf "%s┃%s Installing jq%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	brew install jq
 fi
 
 # Check for roundup; install roundup
 if ! type -P 'roundup' &> /dev/null; then
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Installing Roundup"
-    brew install roundup
+	printf "%s┃%s Installing roundup%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	brew install roundup
 fi
 
 # Tap/Setup homebrew cask for OS X installations
@@ -56,44 +57,71 @@ if [[ ! -d "${HOME}/Library/QuickLook" ]]; then
 	mkdir -p "${HOME}/Library/QuickLook"
 fi
 
-# If missing, download and extract the kegger repository
+# If missing, download and extract the repository
 if [[ ! -d "${DIR}" ]]; then
 
-    # no bash directory found
-    printf "$(tput bold ; tput setaf 3)⚠ Warning: $(tput sgr0)%s!\n" "No ${DIR} found"
+	# No directory found
+	printf "%s⚠ Warning:%s No %s found!\n" "$(tput bold ; tput setaf 3)" "$(tput sgr0)" "${DIR}"
 
-    # create directory
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Creating directory at ${DIR}"
-    mkdir -p "${DIR}"
+	# Create directory
+	printf "%s┃%s Creating directory at %s...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "${DIR}" "$(tput sgr0)"
+	mkdir -p "${DIR}"
 
-    # Download the repository as a tarball
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Downloading repository to /tmp directory"
-    curl -#fLo /tmp/kegger.tar.gz "https://github.com/${GITHUB_USER}/kegger/tarball/master"
+	# Download the repository as a tarball
+	printf "%s┃%s Downloading repository to /tmp directory...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	curl -#fLo /tmp/${REPO}.tar.gz "https://github.com/${GITHUB_USER}/${REPO}/tarball/master"
 
-    # Extract to the kegger directory
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Extracting files to ${DIR}"
-    tar -zxf /tmp/kegger.tar.gz --strip-components 1 -C "${DIR}"
+	# Extract to the ${REPO} directory
+	printf "%s┃%s Extracting files to %s...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "${DIR}" "$(tput sgr0)"
+	tar -zxf /tmp/${REPO}.tar.gz --strip-components 1 -C "${DIR}"
 
-    # Remove the tarball
-    printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Removing tarball from /tmp directory"
-    rm -rf /tmp/kegger.tar.gz
+	# Remove the tarball
+	printf "%s┃%s Removing tarball from /tmp directory...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+	rm -rf /tmp/${REPO}.tar.gz
 
-    printf "$(tput setaf 2)✓ Success: $(tput sgr0)%s.\n" "${DIR} created, repository downloaded and extracted"
+	printf "%s✓ Success:%s %s created, repository downloaded and extracted.\n" "$(tput setaf 2)" "$(tput sgr0)" "${DIR}"
 fi
 
-# Change to the kegger directory
+# Change to the ${REPO} directory
 cd "${DIR}"
 
+# Initialize the git repository if it's missing
+printf "%s┃%s Initializing git repository...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+git init
+
+# Add Github url as remote
+printf "%s┃%s Adding https://github.com/%s/%s.git as origin...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "${GITHUB_USER}" "${REPO}" "$(tput sgr0)"
+git remote add origin "https://github.com/${GITHUB_USER}/${REPO}.git"
+
+# Fetch all changes in repo from master
+printf "%s┃%s Downloading changes from origin...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+git fetch origin master
+
+# Reset the index and working tree to the fetched HEAD
+# (submodules are cloned in the subsequent sync step)
+printf "%s┃%s Resetting index & working tree to fetched HEAD...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+git reset --hard FETCH_HEAD
+
+# Remove any untracked files
+printf "%s┃%s Removing any untracked files...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+git clean -fd
+
+[[ $? ]] && printf "%s✓ Success:%s Repository has been initialized.%s\n" "$(tput setaf 2)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+
 # Pull down the latest changes
-printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Pulling down latest changes"
+printf "%s┃%s Pulling down latest changes...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
 git pull --rebase origin master
 
-printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Symlinking ${DIR}/bin/kegger to /usr/local/bin/kegger"
-ln -fs "${DIR}/bin/kegger" "/usr/local/bin/kegger"
+# Update submodules
+printf "%s┃%s Updating submodules...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
+git submodule update --recursive --init --quiet
 
-printf "$(tput setaf 6)┃ $(tput sgr0)$(tput setaf 7)%s...$(tput sgr0)\n" "Symlinking ${DIR}/share/man/man1/kegger.1 to /usr/local/share/man/man1/kegger.1"
-ln -fs "${DIR}/share/man/man1/kegger.1" "/usr/local/share/man/man1/kegger.1"
+[[ $? ]] && printf "%s✓ Success:%s Repository has been updated.%s\n" "$(tput setaf 2)" "$(tput sgr0 ; tput setaf 7)" "$(tput sgr0)"
 
-if [ -h "/usr/local/bin/kegger" ]; then
-    printf "$(tput setaf 2)✓ Success: $(tput sgr0)%s.\n" "kegger has been installed"
-fi
+printf "%s┃%s Symlinking %s/bin/%s to /usr/local/bin/...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "${DIR}" "${REPO}" "$(tput sgr0)"
+ln -fs "${DIR}/bin/${REPO}" "/usr/local/bin/${REPO}"
+
+printf "%s┃%s Symlinking %s/share/man/man1/%s to /usr/local/share/man/man1/...%s\n" "$(tput setaf 6)" "$(tput sgr0 ; tput setaf 7)" "${DIR}" "${REPO}" "$(tput sgr0)"
+ln -fs "${DIR}/share/man/man1/${REPO}.1" "/usr/local/share/man/man1/${REPO}.1"
+
+[[ $? ]] && printf "%s✓ Success:%s %s has been installed.%s\n" "$(tput setaf 2)" "$(tput sgr0 ; tput setaf 7)" "${DIR}" "$(tput sgr0)"
