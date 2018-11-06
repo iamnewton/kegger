@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-REPO="kegger"
-DIR="/usr/local/opt/${REPO}"
-GITHUB_USER="chrisopedia"
+readonly REPO="kegger"
+readonly DIR="/usr/local/opt/${REPO}"
+readonly GITHUB_USER="chrisopedia"
+readonly TAPS="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-cask"
 
 # Check for Homebrew; install brew
 if ! type -P 'brew' &> /dev/null; then
@@ -35,19 +36,13 @@ if ! type -P 'roundup' &> /dev/null; then
 	brew install roundup
 fi
 
-# Tap/Setup homebrew cask for OS X installations
-if [[ ! -d "$(brew --prefix)/Library/Taps/caskroom/homebrew-cask" ]]; then
-	brew tap caskroom/cask
-	brew install brew-cask
-fi
-
 # Tap/Setup homebrew cask versions for OS X alternate versions
-if [[ ! -d "$(brew --prefix)/Library/Taps/caskroom/homebrew-versions" ]]; then
+if [[ ! -d "$(brew --prefix)/${TAPS}-versions" ]]; then
 	brew tap caskroom/versions
 fi
 
 # Tap/Setup homebrew php for fonts
-if [[ ! -d "$(brew --prefix)/Library/Taps/caskroom/homebrew-fonts" ]]; then
+if [[ ! -d "$(brew --prefix)/${TAPS}-fonts" ]]; then
 	brew tap caskroom/fonts
 fi
 
