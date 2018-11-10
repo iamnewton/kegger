@@ -118,7 +118,6 @@ _kegger() {
 	# reset IFS back
 	IFS=$OIFS
 
-	brew cask alfred link
 	brew cleanup
 
 	rm -rf "/tmp/${gist_file}"
