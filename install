@@ -38,12 +38,12 @@ fi
 
 # Tap/Setup homebrew cask versions for OS X alternate versions
 if [[ ! -d "$(brew --prefix)/${TAPS}-versions" ]]; then
-	brew tap homebrew/caskroom-versions
+	brew tap homebrew/cask-versions
 fi
 
 # Tap/Setup homebrew php for fonts
 if [[ ! -d "$(brew --prefix)/${TAPS}-fonts" ]]; then
-	brew tap homebrew/caskroom-fonts
+	brew tap homebrew/cask-fonts
 fi
 
 # Tap/Setup homebrew php for Quicklook plugins
