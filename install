@@ -2,7 +2,7 @@
 
 readonly REPO="kegger"
 readonly DIR="/usr/local/opt/${REPO}"
-readonly GITHUB_USER="chrisopedia"
+readonly GITHUB_USER="iamnewton"
 readonly TAPS="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-cask"
 
 # Check for Homebrew; install brew
